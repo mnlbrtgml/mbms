@@ -32,9 +32,9 @@ export const useRecordStore = defineStore("record", () => {
 
   function createRecord(record: ICreateRecord): void {
     createdAt.value = getCurrentDateAndTime();
-    boatName.value = record.boatName;
-    serialNumber.value = record.serialNumber;
-    destination.value = record.destination;
+    boatName.value = record.boatName!;
+    serialNumber.value = record.serialNumber!;
+    destination.value = record.destination!;
   }
 
   function resetRecord(): void {
