@@ -47,10 +47,13 @@ const result = reactive<IRealtimeDbResponse>({
 });
 
 const status = computed(() => {
-  if (!result.IsAvailable && !result.IsDeparted) return ["bg-red-600", "There is no boat nearby"];
-  else if (result.IsAvailable && !result.IsDeparted)
+  if (!result.IsAvailable && !result.IsLoading && result.IsDeparted) {
+    return ["bg-red-600", "There is no boat nearby"];
+  } else if (result.IsAvailable) {
     return ["bg-green-600", "There is available boat nearby"];
-  else return ["bg-blue-600", "The boat is currently loading"];
+  } else {
+    return ["bg-blue-600", "The boat is currently loading"];
+  }
 });
 
 const realtimeDatabaseRef = useDbRef(database);
