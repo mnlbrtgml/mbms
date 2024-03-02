@@ -1,12 +1,12 @@
 <template>
   <Dialog :open="isModalVisible">
     <DialogTrigger as-child>
-      <Button @click="handleModalCreation"> Create new record </Button>
+      <Button @click="handleModalCreation"> Create Record </Button>
     </DialogTrigger>
 
     <DialogContent class="sm:max-w-[40rem]">
       <DialogHeader>
-        <DialogTitle> Boat Information </DialogTitle>
+        <DialogTitle> Create Record </DialogTitle>
         <DialogDescription>
           Complete answering the input fields then click create when you're done.
         </DialogDescription>

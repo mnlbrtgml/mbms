@@ -1,14 +1,14 @@
 <template>
   <Dialog>
     <DialogTrigger as-child>
-      <Button> Upload image </Button>
+      <Button> Upload Image </Button>
     </DialogTrigger>
 
     <DialogContent class="sm:max-w-[40rem]">
       <DialogHeader>
-        <DialogTitle> Add Image File </DialogTitle>
+        <DialogTitle> Upload Image </DialogTitle>
         <DialogDescription>
-          Uploading a new image will override the previously uploaded image
+          Uploading a new image will override the previously uploaded image.
         </DialogDescription>
       </DialogHeader>
 
