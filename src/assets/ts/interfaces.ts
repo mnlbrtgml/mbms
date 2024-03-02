@@ -17,12 +17,12 @@ interface IResponse {
 }
 
 interface ICreateRecord {
-  boatName: string;
-  serialNumber: string;
-  destination: string;
+  boatName: string | null;
+  serialNumber: string | null;
+  destination: string | null;
 }
 
-interface IRealtimeDbResponse {
+interface IRtdbResponse {
   IsAvailable: boolean;
   IsDeparted: boolean;
   IsLoading: boolean;
@@ -30,4 +30,4 @@ interface IRealtimeDbResponse {
   PassengerCount: number;
 }
 
-export type { IFirebaseConfig, IResponse, ICreateRecord, IRealtimeDbResponse };
+export type { IFirebaseConfig, IResponse, ICreateRecord, IRtdbResponse };

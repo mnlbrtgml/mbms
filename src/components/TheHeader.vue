@@ -29,16 +29,17 @@
 </template>
 
 <script lang="ts" setup>
-import type { IRealtimeDbResponse } from "@/assets/ts/interfaces";
+import type { IRtdbResponse } from "@/assets/ts/interfaces";
 import { database } from "@/firebase/config";
 import { reactive, computed } from "vue";
-import { ref as useDbRef, onValue } from "firebase/database";
+import { ref as useRtdbRef, onValue } from "firebase/database";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import CreateRecord from "@/components/CreateRecord.vue";
 import UploadImage from "@/components/UploadImage.vue";
 import DownloadRecord from "@/components/DownloadRecord.vue";
 
-const result = reactive<IRealtimeDbResponse>({
+const rtdbRef = useRtdbRef(database);
+const rtdbData = reactive<IRtdbResponse>({
   IsAvailable: true,
   IsDeparted: false,
   IsLoading: false,
@@ -47,26 +48,24 @@ const result = reactive<IRealtimeDbResponse>({
 });
 
 const status = computed(() => {
-  if (!result.IsAvailable && !result.IsLoading && result.IsDeparted) {
+  if (!rtdbData.IsAvailable && !rtdbData.IsLoading && !rtdbData.IsDeparted) {
     return ["bg-red-600", "There is no boat nearby"];
-  } else if (result.IsAvailable) {
+  } else if (rtdbData.IsAvailable) {
     return ["bg-green-600", "There is available boat nearby"];
   } else {
     return ["bg-blue-600", "The boat is currently loading"];
   }
 });
 
-const realtimeDatabaseRef = useDbRef(database);
+onValue(rtdbRef, (snapshot) => {
+  const data: any = snapshot.val();
 
-onValue(realtimeDatabaseRef, (snapshot) => {
-  const response: any = snapshot.val();
-
-  if (response["0xb1"]) {
-    result.IsAvailable = response["0xb1"].IsAvailable;
-    result.IsDeparted = response["0xb1"].IsDeparted;
-    result.PassengerCount = response["0xb1"].PassengerCount;
-    result.IsLoading = response["0xb1"].IsLoading;
-    result.LoadingStatus = response["0xb1"].LoadingStatus;
+  if (data["0xb1"]) {
+    rtdbData.IsAvailable = data["0xb1"].IsAvailable;
+    rtdbData.IsDeparted = data["0xb1"].IsDeparted;
+    rtdbData.PassengerCount = data["0xb1"].PassengerCount;
+    rtdbData.IsLoading = data["0xb1"].IsLoading;
+    rtdbData.LoadingStatus = data["0xb1"].LoadingStatus;
   }
 });
 </script>

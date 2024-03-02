@@ -16,7 +16,7 @@
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="boat-name" class="text-right"> Boat Name </Label>
           <Input
-            v-model.trim="form.boatName"
+            v-model.trim="form.boatName!"
             id="boat-name"
             class="col-span-3"
             placeholder="Ex. My Boat"
@@ -26,7 +26,7 @@
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="serial-number" class="text-right"> Serial Number </Label>
           <Input
-            v-model.trim="form.serialNumber"
+            v-model.trim="form.serialNumber!"
             id="serial-number"
             class="col-span-3"
             placeholder="Ex. 123456789"
@@ -35,7 +35,7 @@
         </div>
         <div class="grid grid-cols-4 items-center gap-4">
           <Label for="destination" class="text-right"> Destination </Label>
-          <Select v-model="form.destination" id="destination" required>
+          <Select v-model="form.destination!" id="destination" required>
             <SelectTrigger class="col-span-3">
               <SelectValue placeholder="Select destination" />
             </SelectTrigger>
@@ -64,10 +64,10 @@
 
 <script lang="ts" setup>
 import destinations from "@/assets/data/destinations.json";
-import type { ICreateRecord, IRealtimeDbResponse } from "@/assets/ts/interfaces";
+import type { ICreateRecord, IRtdbResponse } from "@/assets/ts/interfaces";
 import { database } from "@/firebase/config";
-import { ref as useDbRef, onValue, set } from "firebase/database";
-// import { useRecordStore } from "@/stores/record";
+import { ref as useRtdbRef, onValue, set } from "firebase/database";
+import { useRecordStore } from "@/stores/record";
 import { useToast } from "@/components/ui/toast/use-toast";
 import { reactive, ref } from "vue";
 import { Button } from "@/components/ui/button";
@@ -93,9 +93,10 @@ import {
 } from "@/components/ui/select";
 
 const { toast } = useToast();
-// const store = useRecordStore();
+const store = useRecordStore();
+const rtdbRef = useRtdbRef(database);
 const isModalVisible = ref(false);
-const result = reactive<IRealtimeDbResponse>({
+const rtdbData = reactive<IRtdbResponse>({
   IsAvailable: true,
   IsDeparted: false,
   IsLoading: false,
@@ -103,39 +104,37 @@ const result = reactive<IRealtimeDbResponse>({
   PassengerCount: 0,
 });
 const form = reactive<ICreateRecord>({
-  boatName: "",
-  serialNumber: "",
-  destination: "",
+  boatName: null,
+  serialNumber: null,
+  destination: null,
 });
 
-const realtimeDatabaseRef = useDbRef(database);
+onValue(rtdbRef, (snapshot) => {
+  const data: any = snapshot.val();
 
-onValue(realtimeDatabaseRef, (snapshot) => {
-  const response: any = snapshot.val();
-
-  if (response["0xb1"]) {
-    result.IsAvailable = response["0xb1"].IsAvailable;
-    result.IsDeparted = response["0xb1"].IsDeparted;
-    result.PassengerCount = response["0xb1"].PassengerCount;
-    result.IsLoading = response["0xb1"].IsLoading;
-    result.LoadingStatus = response["0xb1"].LoadingStatus;
+  if (data["0xb1"]) {
+    rtdbData.IsAvailable = data["0xb1"].IsAvailable;
+    rtdbData.IsDeparted = data["0xb1"].IsDeparted;
+    rtdbData.PassengerCount = data["0xb1"].PassengerCount;
+    rtdbData.IsLoading = data["0xb1"].IsLoading;
+    rtdbData.LoadingStatus = data["0xb1"].LoadingStatus;
   }
 });
 
+function resetForm(): void {
+  form.boatName = null;
+  form.serialNumber = null;
+  form.destination = null;
+}
+
 async function updateDatabase(): Promise<void> {
-  result.IsLoading = true;
+  rtdbData.IsLoading = true;
 
   try {
-    await set(useDbRef(database), { "0xb1": { ...result } });
+    await set(rtdbRef, { "0xb1": { ...rtdbData } });
   } catch (error) {
     console.log(error);
   }
-}
-
-function resetForm(): void {
-  form.boatName = "";
-  form.serialNumber = "";
-  form.destination = "";
 }
 
 function handleModalCreation(): void {
@@ -146,11 +145,12 @@ function handleModalCreation(): void {
 async function handleRecordSaving(): Promise<void> {
   form.destination =
     destinations.destinations.find((destination) => destination.value === form.destination)
-      ?.label ?? "";
+      ?.label ?? null;
 
-  if (!Object.values(form).some((value) => value.trim().length === 0)) {
+  if (!Object.values(form).some((value) => value?.trim().length === 0)) {
     await updateDatabase().then(() => {
-      // store.createRecord(form);
+      store.createRecord(form);
+
       toast({
         title: "Record Successfully Created!",
         description: `Boat: ${form.boatName} | Serial Number: ${form.serialNumber} | Destination: ${form.destination}`,
