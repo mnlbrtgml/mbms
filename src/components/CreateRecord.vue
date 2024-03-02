@@ -59,7 +59,9 @@
 
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle> {{ alertTitle }} </AlertDialogTitle>
+              <AlertDialogTitle :class="isFormFilledOut ? 'text-primary' : 'text-destructive'">
+                {{ alertTitle }}
+              </AlertDialogTitle>
               <AlertDialogDescription> {{ alertDescription }} </AlertDialogDescription>
             </AlertDialogHeader>
 
@@ -122,7 +124,9 @@ const { toast } = useToast();
 const store = useRecordStore();
 const rtdbRef = useRtdbRef(database);
 const isDialogOpen = ref(false);
-const isFormFilledOut = computed(() => !Object.values(form).some((value) => value === null));
+const isFormFilledOut = computed(
+  () => !Object.values(form).some((value: string | null) => value === null || value.length === 0),
+);
 const alertTitle = computed(() => (isFormFilledOut.value ? "Saving Confirmation" : "Saving Error"));
 const alertDescription = computed(() =>
   isFormFilledOut.value
