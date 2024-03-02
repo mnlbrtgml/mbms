@@ -1,11 +1,6 @@
+import type { IResponse } from "@/assets/ts/interfaces";
 import { auth } from "@/firebase/config";
-import { signOut, type User } from "firebase/auth";
-
-interface IResponse {
-  data: User | null;
-  code: string;
-  message: string;
-}
+import { signOut } from "firebase/auth";
 
 const response: IResponse = {
   data: null,

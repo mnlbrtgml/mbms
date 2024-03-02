@@ -1,20 +1,47 @@
 <template>
-  <template>
-    <header class="p-2 sticky top-0 z-50">
-      <nav class="p-2 flex items-center justify-between gap-4">
-        <div></div>
-        <div></div>
-      </nav>
-    </header>
+  <template v-if="isAuthenticated">
+    <TheHeader />
 
     <main class="p-4">
-      <section></section>
+      <p>Account signed in: {{ email }}</p>
     </main>
+
+    <Toaster />
   </template>
 
-  <template>
-    <section>
-      <p></p>
-    </section>
+  <template v-else>
+    <TheLoading />
   </template>
 </template>
+
+<script lang="ts" setup>
+import type { IResponse } from "@/assets/ts/interfaces";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/firebase/config";
+import { ref } from "vue";
+import Toaster from "@/components/ui/toast/Toaster.vue";
+import useSignIn from "@/firebase/auth/signin";
+import TheLoading from "@/components/TheLoading.vue";
+import TheHeader from "@/components/TheHeader.vue";
+
+const isAuthenticated = ref(false);
+const email = ref<string | null>(null);
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    isAuthenticated.value = true;
+    email.value = user.email;
+  } else {
+    try {
+      const response: IResponse = await useSignIn(
+        import.meta.env.VITE_FIREBASE_EMAIL,
+        import.meta.env.VITE_FIREBASE_PASSWORD,
+      );
+
+      if (response) isAuthenticated.value = true;
+    } catch (error: any) {
+      isAuthenticated.value = false;
+    }
+  }
+});
+</script>

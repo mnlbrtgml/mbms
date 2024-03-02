@@ -1,0 +1,76 @@
+{
+  "destinations": [
+    {
+      "value": "brgy_bangad",
+      "label": "Brgy. Bangad"
+    },
+    {
+      "value": "brgy_binitagan",
+      "label": "Brgy. Binitagan"
+    },
+    {
+      "value": "brgy_bombong",
+      "label": "Brgy. Bombong"
+    },
+    {
+      "value": "brgy_buhangin",
+      "label": "Brgy. Buhangin"
+    },
+    {
+      "value": "brgy_ginoong sanay",
+      "label": "Brgy. Ginoong Sanay"
+    },
+    {
+      "value": "brgy_gulod",
+      "label": "Brgy. Gulod"
+    },
+    {
+      "value": "brgy_habagatan",
+      "label": "Brgy. Habagatan"
+    },
+    {
+      "value": "brgy_janosa",
+      "label": "Brgy. Janosa"
+    },
+    {
+      "value": "brgy_kasile",
+      "label": "Brgy. Kasile"
+    },
+    {
+      "value": "brgy_kaytome",
+      "label": "Brgy. Kaytome"
+    },
+    {
+      "value": "brgy_kinaboogan",
+      "label": "Brgy. Kinaboogan"
+    },
+    {
+      "value": "brgy_kinagatan",
+      "label": "Brgy. Kinagatan"
+    },
+    {
+      "value": "brgy_malakaban",
+      "label": "Brgy. Malakaban"
+    },
+    {
+      "value": "brgy_pipindan",
+      "label": "Brgy. Pipindan"
+    },
+    {
+      "value": "brgy_pinagdilawan",
+      "label": "Brgy. Pinagdilawan"
+    },
+    {
+      "value": "brgy_rayap",
+      "label": "Brgy. Rayap"
+    },
+    {
+      "value": "brgy_sapang",
+      "label": "Brgy. Sapang"
+    },
+    {
+      "value": "brgy_tabon",
+      "label": "Brgy. Tabon"
+    }
+  ]
+}
