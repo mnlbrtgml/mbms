@@ -17,9 +17,9 @@
       </div>
 
       <div class="space-x-2">
-        <CreateRecord v-if="status[0].includes('green')" />
+        <CreateRecord v-if="rtdbData.IsAvailable && !rtdbData.IsLoading" />
 
-        <template v-else-if="status[0].includes('blue')">
+        <template v-if="!status[0].includes('red') && store.createdAt !== 'N/A'">
           <UploadImage />
           <DownloadRecord />
         </template>
@@ -34,10 +34,12 @@ import { database } from "@/firebase/config";
 import { reactive, computed } from "vue";
 import { ref as useRtdbRef, onValue } from "firebase/database";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useRecordStore } from "@/stores/record";
 import CreateRecord from "@/components/CreateRecord.vue";
 import UploadImage from "@/components/UploadImage.vue";
 import DownloadRecord from "@/components/DownloadRecord.vue";
 
+const store = useRecordStore();
 const rtdbRef = useRtdbRef(database);
 const rtdbData = reactive<IRtdbResponse>({
   IsAvailable: true,

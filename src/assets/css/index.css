@@ -70,6 +70,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[url('./src/assets/images/background.svg')] bg-cover bg-center bg-no-repeat text-foreground h-screen;
   }
 }

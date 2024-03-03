@@ -34,13 +34,21 @@
           <div
             class="bg-gray-100 text-gray-700 text-sm rounded-b-lg grid grid-cols-7 text-center divide-x"
           >
-            <p class="py-2 flex items-center justify-center">{{ store.createdAt }}</p>
-            <p class="py-2 flex items-center justify-center">{{ store.boatName }}</p>
-            <p class="py-2 flex items-center justify-center">{{ store.serialNumber }}</p>
-            <p class="py-2 flex items-center justify-center">{{ store.destination }}</p>
-            <p class="py-2 flex items-center justify-center">{{ store.passengersCount }}</p>
-            <p class="py-2 flex items-center justify-center">{{ store.loadingStatus }}</p>
-            <p class="text-balance flex flex-col justify-center">{{ store.departedAt }}</p>
+            <p class="py-2 text-pretty flex items-center justify-center">{{ store.createdAt }}</p>
+            <p class="py-2 text-pretty flex items-center justify-center">{{ store.boatName }}</p>
+            <p class="py-2 text-pretty flex items-center justify-center">
+              {{ store.serialNumber }}
+            </p>
+            <p class="py-2 text-pretty flex items-center justify-center">
+              {{ store.destination }}
+            </p>
+            <p class="py-2 text-pretty flex items-center justify-center">
+              {{ store.passengersCount }}
+            </p>
+            <p class="py-2 text-pretty flex items-center justify-center">
+              {{ store.loadingStatus }}
+            </p>
+            <p class="text-pretty flex flex-col justify-center">{{ store.departedAt }}</p>
           </div>
         </div>
       </div>
@@ -57,11 +65,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { IResponse } from "@/assets/ts/interfaces";
-import { useRecordStore } from "@/stores/record";
+import type { IResponse, IRtdbResponse } from "@/assets/ts/interfaces";
+import { ref as useRtdbRef, onValue, set } from "firebase/database";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebase/config";
-import { ref, watchEffect } from "vue";
+import { database, auth } from "@/firebase/config";
+import { useRecordStore } from "@/stores/record";
+import { ref, reactive } from "vue";
 import Toaster from "@/components/ui/toast/Toaster.vue";
 import useSignIn from "@/firebase/auth/signin";
 import TheLoading from "@/components/TheLoading.vue";
@@ -69,12 +78,51 @@ import TheHeader from "@/components/TheHeader.vue";
 
 const store = useRecordStore();
 const isAuthenticated = ref(false);
-const email = ref<string | null>(null);
+
+const rtdbData = reactive<IRtdbResponse>({
+  IsAvailable: true,
+  IsDeparted: false,
+  IsLoading: false,
+  LoadingStatus: " ------ ",
+  PassengerCount: 0,
+});
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
     isAuthenticated.value = true;
-    email.value = user.email;
+
+    const rtdbRef = useRtdbRef(database);
+
+    onValue(rtdbRef, (snapshot) => {
+      const data: any = snapshot.val();
+
+      if (!data["0xb1"].IsAvailable && !data["0xb1"].IsDeparted && !data["0xb1"].IsLoading) {
+        store.resetRecord();
+      }
+
+      if (!data["0xb1"].IsDeparted) {
+        rtdbData.IsAvailable = data["0xb1"].IsAvailable;
+        rtdbData.IsDeparted = data["0xb1"].IsDeparted;
+        rtdbData.PassengerCount = data["0xb1"].PassengerCount;
+        rtdbData.IsLoading = data["0xb1"].IsLoading;
+        rtdbData.LoadingStatus = data["0xb1"].LoadingStatus;
+
+        store.passengersCount = rtdbData.PassengerCount.toString();
+        store.loadingStatus = rtdbData.LoadingStatus;
+      } else {
+        set(rtdbRef, {
+          "0xb1": {
+            IsAvailable: false,
+            IsDeparted: true,
+            IsLoading: false,
+            LoadingStatus: " ------ ",
+            PassengerCount: 0,
+          },
+        });
+
+        store.setDeparted();
+      }
+    });
   } else {
     try {
       const response: IResponse = await useSignIn(

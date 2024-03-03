@@ -33,6 +33,10 @@ export const useRecordStore = defineStore(
     const departedAt = ref("N/A");
     const imagePath = ref("N/A");
 
+    function setDeparted(): void {
+      departedAt.value = getCurrentDateAndTime();
+    }
+
     function createRecord(record: ICreateRecord): void {
       createdAt.value = getCurrentDateAndTime();
       boatName.value = record.boatName!;
@@ -60,6 +64,7 @@ export const useRecordStore = defineStore(
       loadingStatus,
       departedAt,
       imagePath,
+      setDeparted,
       resetRecord,
       createRecord,
     };
