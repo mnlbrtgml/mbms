@@ -53,7 +53,7 @@ const status = computed(() => {
   } else if (rtdbData.IsAvailable) {
     return ["bg-green-600", "There is available boat nearby"];
   } else {
-    return ["bg-blue-600", "The boat is currently loading"];
+    return ["bg-blue-600", "The boat is ready to depart"];
   }
 });
 
