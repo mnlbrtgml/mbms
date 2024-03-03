@@ -31,7 +31,6 @@ export const useRecordStore = defineStore(
     const passengersCount = ref("N/A");
     const loadingStatus = ref("N/A");
     const departedAt = ref("N/A");
-    const imagePath = ref("N/A");
 
     function createRecord(record: ICreateRecord): void {
       createdAt.value = getCurrentDateAndTime();
@@ -48,7 +47,6 @@ export const useRecordStore = defineStore(
       passengersCount.value = "N/A";
       loadingStatus.value = "N/A";
       departedAt.value = "N/A";
-      imagePath.value = "N/A";
     }
 
     return {
@@ -59,7 +57,6 @@ export const useRecordStore = defineStore(
       passengersCount,
       loadingStatus,
       departedAt,
-      imagePath,
       resetRecord,
       createRecord,
     };

@@ -54,7 +54,7 @@
 import { useRecordStore } from "@/stores/record";
 import { ref, watch } from "vue";
 import { storage } from "@/firebase/config";
-import { ref as useStorageRef, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref as useStorageRef, uploadBytes } from "firebase/storage";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,20 +69,17 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-const store = useRecordStore();
-const isDialogOpen = ref(false);
+const { createdAt } = useRecordStore();
+const isDialogOpen = ref<boolean>(false);
 const previewImage = ref<string | null>(null);
-const imageFile = ref();
+const imageFile = ref<any>(null);
 
 async function uploadImage(): Promise<void> {
   try {
-    const storageRef = useStorageRef(storage, `images/${store.createdAt}`);
+    const storageRef = useStorageRef(storage, `images/${createdAt}`);
     const snapshot = await uploadBytes(storageRef, imageFile.value);
 
     if (snapshot) {
-      const url = await getDownloadURL(snapshot.ref);
-
-      store.imagePath = url;
       isDialogOpen.value = false;
     }
   } catch (error) {
