@@ -3,7 +3,7 @@
     <TheHeader />
 
     <main class="p-4">
-      <div v-if="store" class="p-8 flex flex-col gap-4">
+      <div v-if="store.createdAt !== 'N/A'" class="p-8 flex flex-col gap-4">
         <h1>{{ `Record for ${store.createdAt}` }}</h1>
 
         <div class="p-1">
@@ -61,7 +61,7 @@ import type { IResponse } from "@/assets/ts/interfaces";
 import { useRecordStore } from "@/stores/record";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/config";
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 import Toaster from "@/components/ui/toast/Toaster.vue";
 import useSignIn from "@/firebase/auth/signin";
 import TheLoading from "@/components/TheLoading.vue";

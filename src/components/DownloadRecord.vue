@@ -15,7 +15,7 @@
       <div class="grid gap-4 py-4">
         <Button @click="downloadPdfFile">Download record of {{ store.createdAt }} in PDF</Button>
 
-        <div class="hidden">
+        <div class="max-h-40 overflow-auto">
           <div ref="divElement" class="bg-white w-[210mm] h-[297mm] p-8 flex flex-col gap-4">
             <h1>{{ `Record for ${store.createdAt}` }}</h1>
 
@@ -53,7 +53,12 @@
               </div>
             </div>
 
-            <img :src="image" :alt="store.createdAt" class="w-full mt-8 border" />
+            <img
+              v-if="store.imagePath !== 'N/A'"
+              :src="store.imagePath"
+              :alt="store.createdAt"
+              class="w-full mt-8 border"
+            />
           </div>
         </div>
       </div>
@@ -88,7 +93,7 @@ import domtoimage from "dom-to-image";
 
 const store = useRecordStore();
 const image = ref();
-const divElement = ref<HTMLDivElement | null>(null);
+const divElement = ref();
 const dimension = [595, 842]; // A4 dimension
 
 async function downloadPdfFile(): Promise<void> {
@@ -99,7 +104,7 @@ async function downloadPdfFile(): Promise<void> {
     if (url) {
       image.value = url;
 
-      domtoimage.toPng(divElement.value!).then((response) => {
+      domtoimage.toPng(divElement.value).then((response) => {
         const pdf = new jsPDF("portrait", "pt", dimension);
         pdf.addImage(response, "PNG", 0, 0, dimension[0], dimension[1]);
         pdf.save("table.pdf");
