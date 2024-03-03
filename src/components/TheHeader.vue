@@ -19,10 +19,10 @@
       <div class="space-x-2">
         <CreateRecord v-if="status[0].includes('green')" />
 
-        <template v-else>
-          <UploadImage />
-          <DownloadRecord />
-        </template>
+        <!-- <template v-else-if="status[0].includes('blue')"> -->
+        <UploadImage />
+        <DownloadRecord />
+        <!-- </template> -->
       </div>
     </nav>
   </header>

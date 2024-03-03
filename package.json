@@ -21,6 +21,7 @@
     "jspdf": "^2.5.1",
     "lucide-vue-next": "^0.344.0",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
     "radix-vue": "^1.4.9",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",

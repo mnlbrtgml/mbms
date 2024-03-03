@@ -4,6 +4,8 @@
 
     <main class="p-4">
       <p>Account signed in: {{ email }}</p>
+
+      {{ store }}
     </main>
 
     <Toaster />
@@ -16,6 +18,7 @@
 
 <script lang="ts" setup>
 import type { IResponse } from "@/assets/ts/interfaces";
+import { useRecordStore } from "@/stores/record";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "@/firebase/config";
 import { ref } from "vue";
@@ -24,6 +27,7 @@ import useSignIn from "@/firebase/auth/signin";
 import TheLoading from "@/components/TheLoading.vue";
 import TheHeader from "@/components/TheHeader.vue";
 
+const store = useRecordStore();
 const isAuthenticated = ref(false);
 const email = ref<string | null>(null);
 
