@@ -107,7 +107,7 @@ async function downloadPdfFile(): Promise<void> {
       domtoimage.toPng(divElement.value).then((response) => {
         const pdf = new jsPDF("portrait", "pt", dimension);
         pdf.addImage(response, "PNG", 0, 0, dimension[0], dimension[1]);
-        pdf.save("table.pdf");
+        pdf.save(`record_${store.createdAt.replace(" ", "_").toLowerCase()}.pdf`);
       });
     }
   } catch (error) {
