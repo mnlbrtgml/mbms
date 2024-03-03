@@ -62,6 +62,17 @@ export const useRecordStore = defineStore(
     };
   },
   {
-    persist: true,
+    persist: {
+      storage: window.localStorage,
+      paths: [
+        "createdAt",
+        "boatName",
+        "serialNumber",
+        "destination",
+        "passengersCount",
+        "loadingStatus",
+        "departedAt",
+      ],
+    },
   },
 );
