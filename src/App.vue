@@ -34,8 +34,12 @@
           <div
             class="bg-gray-100 text-gray-700 text-sm rounded-b-lg grid grid-cols-7 text-center divide-x"
           >
-            <p class="py-2 text-pretty flex items-center justify-center">{{ store.createdAt }}</p>
-            <p class="py-2 text-pretty flex items-center justify-center">{{ store.boatName }}</p>
+            <p class="py-2 text-pretty flex items-center justify-center">
+              {{ store.createdAt }}
+            </p>
+            <p class="py-2 text-pretty flex items-center justify-center">
+              {{ store.boatName }}
+            </p>
             <p class="py-2 text-pretty flex items-center justify-center">
               {{ store.serialNumber }}
             </p>
@@ -48,7 +52,9 @@
             <p class="py-2 text-pretty flex items-center justify-center">
               {{ store.loadingStatus }}
             </p>
-            <p class="text-pretty flex flex-col justify-center">{{ store.departedAt }}</p>
+            <p class="text-pretty flex flex-col justify-center">
+              {{ store.departedAt }}
+            </p>
           </div>
         </div>
       </div>
@@ -75,7 +81,9 @@
                 Number of <br />
                 Passengers
               </p>
-              <p class="py-2 flex items-center justify-center">Loading Status</p>
+              <p class="py-2 flex items-center justify-center">
+                Loading Status
+              </p>
               <p class="text-balance flex flex-col justify-center">
                 Departed <br />
                 Date and Time
@@ -90,7 +98,9 @@
               <p class="py-2 text-pretty flex items-center justify-center">
                 {{ record.createdAt }}
               </p>
-              <p class="py-2 text-pretty flex items-center justify-center">{{ record.boatName }}</p>
+              <p class="py-2 text-pretty flex items-center justify-center">
+                {{ record.boatName }}
+              </p>
               <p class="py-2 text-pretty flex items-center justify-center">
                 {{ record.serialNumber }}
               </p>
@@ -103,7 +113,9 @@
               <p class="py-2 text-pretty flex items-center justify-center">
                 {{ record.loadingStatus }}
               </p>
-              <p class="text-pretty flex flex-col justify-center">{{ record.departedAt }}</p>
+              <p class="text-pretty flex flex-col justify-center">
+                {{ record.departedAt }}
+              </p>
             </div>
           </div>
         </div>
@@ -164,7 +176,11 @@ onAuthStateChanged(auth, async (user) => {
     onValue(rtdbRef, async (snapshot) => {
       const data: any = snapshot.val();
 
-      if (!data["0xb1"].IsAvailable && !data["0xb1"].IsDeparted && !data["0xb1"].IsLoading) {
+      if (
+        !data["0xb1"].IsAvailable &&
+        !data["0xb1"].IsDeparted &&
+        !data["0xb1"].IsLoading
+      ) {
         store.resetRecord();
       }
 
@@ -190,18 +206,33 @@ onAuthStateChanged(auth, async (user) => {
           },
         });
 
-        try {
-          await addDoc(collection(db, "records"), {
-            createdAt: store.createdAt,
-            boatName: store.boatName,
-            serialNumber: store.serialNumber,
-            destination: store.destination,
-            passengersCount: store.passengersCount,
-            loadingStatus: store.loadingStatus,
-            departedAt: store.departedAt,
-          });
-        } catch (e) {
-          console.error("Error adding document: ", e);
+        if (
+          !data["0xb1"].IsAvailable &&
+          data["0xb1"].IsDeparted &&
+          !data["0xb1"].PassengerCount &&
+          data["0xb1"].IsLoading === " ------ " &&
+          data["0xb1"].LoadingStatus === 0 &&
+          store.createdAt !== "N/A" &&
+          store.boatName !== "N/A" &&
+          store.serialNumber !== "N/A" &&
+          store.destination !== "N/A" &&
+          store.passengersCount !== "N/A" &&
+          store.loadingStatus !== "N/A" &&
+          store.departedAt !== "N/A"
+        ) {
+          try {
+            await addDoc(collection(db, "records"), {
+              createdAt: store.createdAt,
+              boatName: store.boatName,
+              serialNumber: store.serialNumber,
+              destination: store.destination,
+              passengersCount: store.passengersCount,
+              loadingStatus: store.loadingStatus,
+              departedAt: store.departedAt,
+            });
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
         }
       }
     });
@@ -209,7 +240,7 @@ onAuthStateChanged(auth, async (user) => {
     try {
       const response: IResponse = await useSignIn(
         import.meta.env.VITE_FIREBASE_EMAIL,
-        import.meta.env.VITE_FIREBASE_PASSWORD,
+        import.meta.env.VITE_FIREBASE_PASSWORD
       );
 
       if (response) isAuthenticated.value = true;
