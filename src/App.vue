@@ -221,7 +221,7 @@ onAuthStateChanged(auth, async (user) => {
           store.departedAt !== "N/A"
         ) {
           try {
-            await addDoc(collection(db, "records"), {
+            await addDoc(collection(db, "records", store.createdAt), {
               createdAt: store.createdAt,
               boatName: store.boatName,
               serialNumber: store.serialNumber,
