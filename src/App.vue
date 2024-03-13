@@ -206,20 +206,7 @@ onAuthStateChanged(auth, async (user) => {
           },
         });
 
-        if (
-          !data["0xb1"].IsAvailable &&
-          data["0xb1"].IsDeparted &&
-          !data["0xb1"].PassengerCount &&
-          data["0xb1"].IsLoading === " ------ " &&
-          data["0xb1"].LoadingStatus === 0 &&
-          store.createdAt !== "N/A" &&
-          store.boatName !== "N/A" &&
-          store.serialNumber !== "N/A" &&
-          store.destination !== "N/A" &&
-          store.passengersCount !== "N/A" &&
-          store.loadingStatus !== "N/A" &&
-          store.departedAt !== "N/A"
-        ) {
+        if (store.createdAt !== "N/A" && store.departedAt !== "N/A") {
           try {
             await addDoc(collection(db, "records", store.createdAt), {
               createdAt: store.createdAt,
@@ -234,6 +221,8 @@ onAuthStateChanged(auth, async (user) => {
             console.error("Error adding document: ", e);
           }
         }
+
+        await useGetRecords();
       }
     });
   } else {
