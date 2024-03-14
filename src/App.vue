@@ -81,9 +81,7 @@
                 Number of <br />
                 Passengers
               </p>
-              <p class="py-2 flex items-center justify-center">
-                Loading Status
-              </p>
+              <p class="py-2 flex items-center justify-center">Loading Status</p>
               <p class="text-balance flex flex-col justify-center">
                 Departed <br />
                 Date and Time
@@ -137,7 +135,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { database, auth, db } from "@/firebase/config";
 import { useRecordStore } from "@/stores/record";
 import { ref, reactive } from "vue";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import Toaster from "@/components/ui/toast/Toaster.vue";
 import useSignIn from "@/firebase/auth/signin";
 import TheLoading from "@/components/TheLoading.vue";
@@ -176,11 +174,7 @@ onAuthStateChanged(auth, async (user) => {
     onValue(rtdbRef, async (snapshot) => {
       const data: any = snapshot.val();
 
-      if (
-        !data["0xb1"].IsAvailable &&
-        !data["0xb1"].IsDeparted &&
-        !data["0xb1"].IsLoading
-      ) {
+      if (!data["0xb1"].IsAvailable && !data["0xb1"].IsDeparted && !data["0xb1"].IsLoading) {
         store.resetRecord();
       }
 
@@ -206,9 +200,14 @@ onAuthStateChanged(auth, async (user) => {
           },
         });
 
-        if (store.createdAt !== "N/A" && store.departedAt !== "N/A") {
+        if (
+          !rtdbData.IsAvailable &&
+          rtdbData.IsLoading &&
+          store.createdAt !== "N/A" &&
+          store.departedAt !== "N/A"
+        ) {
           try {
-            await addDoc(collection(db, "records", store.createdAt), {
+            await addDoc(collection(db, "records"), {
               createdAt: store.createdAt,
               boatName: store.boatName,
               serialNumber: store.serialNumber,
@@ -221,15 +220,13 @@ onAuthStateChanged(auth, async (user) => {
             console.error("Error adding document: ", e);
           }
         }
-
-        await useGetRecords();
       }
     });
   } else {
     try {
       const response: IResponse = await useSignIn(
         import.meta.env.VITE_FIREBASE_EMAIL,
-        import.meta.env.VITE_FIREBASE_PASSWORD
+        import.meta.env.VITE_FIREBASE_PASSWORD,
       );
 
       if (response) isAuthenticated.value = true;
@@ -241,10 +238,18 @@ onAuthStateChanged(auth, async (user) => {
 
 async function useGetRecords(): Promise<void> {
   const getRecords = await getDocs(collection(db, "records"));
+  let temp: IRecordDB[] = [];
 
   getRecords.forEach((record) => {
     const data = record.data();
-    records.push(data as IRecordDB);
+    temp.push(data as IRecordDB);
+  });
+
+  temp.forEach((record) => {
+    const alreadyExists = records.some((item) => item.createdAt === record.createdAt);
+    if (!alreadyExists) {
+      records.push(record);
+    }
   });
 }
 </script>
